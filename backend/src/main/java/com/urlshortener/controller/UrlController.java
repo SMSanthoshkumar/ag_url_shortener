@@ -79,15 +79,14 @@ public class UrlController {
             @PathVariable("shortCode") String shortCode,
             HttpServletRequest request,
             HttpServletResponse response) throws IOException {
-        String originalUrl = urlService.getOriginalUrl(shortCode);
 
-        // Track analytics
-        Url url = urlService.getUrlByShortCode(shortCode);
         String ipAddress = getClientIp(request);
         String userAgent = request.getHeader("User-Agent");
         String referrer = request.getHeader("Referer");
 
-        analyticsService.trackClick(url.getId(), ipAddress, userAgent, referrer);
+        // Single transactional call to lookup and track
+        String originalUrl = urlService.getOriginalUrlAndTrack(shortCode, ipAddress, userAgent, referrer,
+                analyticsService);
 
         // Redirect
         response.sendRedirect(originalUrl);

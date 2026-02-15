@@ -7,6 +7,7 @@ import com.urlshortener.repository.UrlRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -27,6 +28,7 @@ public class UrlService {
     private static final String CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     private static final SecureRandom RANDOM = new SecureRandom();
 
+    @Transactional
     public UrlResponse createShortUrl(String originalUrl, Long userId) {
         // Generate unique short code
         String shortCode = generateUniqueShortCode();
@@ -61,6 +63,7 @@ public class UrlService {
         return code.toString();
     }
 
+    @Transactional(readOnly = true)
     public String getOriginalUrl(String shortCode) {
         Url url = urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Short URL not found"));
@@ -72,6 +75,7 @@ public class UrlService {
         return url.getOriginalUrl();
     }
 
+    @Transactional(readOnly = true)
     public List<UrlResponse> getUserUrls(Long userId) {
         List<Url> urls = urlRepository.findByUserId(userId);
         return urls.stream()
@@ -79,11 +83,28 @@ public class UrlService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void incrementClickCount(Long urlId) {
         Url url = urlRepository.findById(urlId)
                 .orElseThrow(() -> new ResourceNotFoundException("URL not found"));
         url.setTotalClicks(url.getTotalClicks() + 1);
         urlRepository.save(url);
+    }
+
+    @Transactional
+    public String getOriginalUrlAndTrack(String shortCode, String ipAddress, String userAgent, String referrer,
+            AnalyticsService analyticsService) {
+        Url url = urlRepository.findByShortCode(shortCode)
+                .orElseThrow(() -> new ResourceNotFoundException("Short URL not found"));
+
+        if (!url.isActive()) {
+            throw new ResourceNotFoundException("This URL has been deactivated");
+        }
+
+        // Track analytics (this will participate in the current transaction)
+        analyticsService.trackClick(url.getId(), ipAddress, userAgent, referrer);
+
+        return url.getOriginalUrl();
     }
 
     private UrlResponse mapToResponse(Url url) {
@@ -97,6 +118,7 @@ public class UrlService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public Url getUrlByShortCode(String shortCode) {
         return urlRepository.findByShortCode(shortCode)
                 .orElseThrow(() -> new ResourceNotFoundException("Short URL not found"));

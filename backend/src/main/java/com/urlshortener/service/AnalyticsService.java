@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
 public class AnalyticsService {
 
@@ -22,6 +24,7 @@ public class AnalyticsService {
     @Autowired
     private UrlService urlService;
 
+    @Transactional
     public void trackClick(Long urlId, String ipAddress, String userAgent, String referrer) {
         ClickAnalytics analytics = new ClickAnalytics();
         analytics.setUrlId(urlId);
@@ -34,6 +37,7 @@ public class AnalyticsService {
         urlService.incrementClickCount(urlId);
     }
 
+    @Transactional(readOnly = true)
     public AnalyticsResponse getUrlAnalytics(Long urlId) {
         // Verify URL exists
         Url url = urlService.getUrlByShortCode(urlService.getUrlByShortCode(null).getShortCode()); // This line was
@@ -95,6 +99,7 @@ public class AnalyticsService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public AnalyticsResponse getUrlAnalyticsByShortCode(String shortCode) {
         Url url = urlService.getUrlByShortCode(shortCode);
 
@@ -119,6 +124,7 @@ public class AnalyticsService {
         return response;
     }
 
+    @Transactional(readOnly = true)
     public Map<LocalDate, Long> getUserAnalytics(Long userId) {
         List<Object[]> clicksByDate = clickAnalyticsRepository.findClicksByDateForUser(userId);
         return clicksByDate.stream()

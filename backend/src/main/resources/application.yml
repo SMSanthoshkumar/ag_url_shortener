@@ -10,11 +10,13 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true
         allow_update_outside_transaction: true
+        connection:
+          release_mode: after_transaction
   
   servlet:
     multipart:
