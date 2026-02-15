@@ -37,12 +37,11 @@ CREATE TABLE click_analytics (
 CREATE TABLE payments (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL,
-    razorpay_order_id VARCHAR(255) NOT NULL,
-    razorpay_payment_id VARCHAR(255),
-    razorpay_signature VARCHAR(500),
-    amount DECIMAL(10, 2) NOT NULL,
+    payment_reference_id VARCHAR(255) UNIQUE NOT NULL,
+    amount INT NOT NULL,
     status VARCHAR(50) NOT NULL DEFAULT 'PENDING',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    confirmed_at TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -52,4 +51,4 @@ CREATE INDEX idx_urls_short_code ON urls(short_code);
 CREATE INDEX idx_click_analytics_url_id ON click_analytics(url_id);
 CREATE INDEX idx_click_analytics_clicked_at ON click_analytics(clicked_at);
 CREATE INDEX idx_payments_user_id ON payments(user_id);
-CREATE INDEX idx_payments_order_id ON payments(razorpay_order_id);
+CREATE INDEX idx_payments_reference_id ON payments(payment_reference_id);
