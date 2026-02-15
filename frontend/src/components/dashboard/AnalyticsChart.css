@@ -1,0 +1,53 @@
+.analytics-container {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.analytics-header {
+    margin-bottom: 32px;
+}
+
+.analytics-header h2 {
+    margin: 0 0 16px 0;
+    color: #1a202c;
+    font-size: 24px;
+}
+
+.analytics-summary {
+    display: flex;
+    gap: 24px;
+}
+
+.summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 8px;
+    color: white;
+}
+
+.summary-label {
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+.summary-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.chart-container {
+    margin-top: 24px;
+}
+
+.analytics-container .empty-state {
+    padding: 40px;
+    text-align: center;
+    background: #f7fafc;
+    border-radius: 8px;
+    color: #718096;
+}

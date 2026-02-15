@@ -1,0 +1,67 @@
+spring:
+  application:
+    name: url-shortener-saas
+  
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://aws-1-ap-south-1.pooler.supabase.com:6543/postgres}
+    username: ${DATABASE_USERNAME:postgres.nwgnqwflofaardofexiu}
+    password: "${DATABASE_PASSWORD:ag_url_short_smsk}"
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        allow_update_outside_transaction: true
+  
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: always
+    include-stacktrace: on_param
+
+# Application Configuration
+app:
+  jwt:
+    secret: ${JWT_SECRET:MyVerySecureJWTSecretKeyThatIsAtLeast256BitsLongForHS256Algorithm}
+    expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds
+  
+  
+  url:
+    base-url: ${BASE_URL:http://localhost:8080}
+    short-code-length: 7
+  
+  payment:
+    amount: ${PAYMENT_AMOUNT:100}  # Amount in paise (INR 1.00)
+    currency: INR
+    upi-id: ${UPI_ID:yourname@paytm}
+    merchant-name: ${MERCHANT_NAME:URL Shortener SaaS}
+  
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173,http://localhost:3000}
+
+# Swagger Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.urlshortener: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
