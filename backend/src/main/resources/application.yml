@@ -9,6 +9,8 @@ spring:
     driver-class-name: org.postgresql.Driver
   
   jpa:
+    database: POSTGRESQL
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: update
     properties:
@@ -66,5 +68,7 @@ logging:
     com.urlshortener: DEBUG
     org.springframework.security: DEBUG
     org.hibernate.SQL: DEBUG
+    org.hibernate.engine.jdbc.dialect: DEBUG
+    org.springframework.jdbc: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
